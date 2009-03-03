@@ -1,0 +1,114 @@
+<html>
+<head>
+<!-- include needed JS files-->
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../jquery.optionTree.js"></script>
+</head>
+<body>
+<h1>Demo for optionTree plugin</h1>
+<p>Plugin homepage: <a href="http://code.google.com/p/jquery-option-tree/">http://code.google.com/p/jquery-option-tree/</a></p>
+<h2>Example 1</h2>
+<input type="text" name="demo1" />
+<script type="text/javascript">
+$(function() {
+
+    var option_tree = {
+       "Option 1": {"Suboption":200},
+       "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
+	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+	           }
+    };
+
+    $('input[name=demo1]').optionTree(option_tree);
+
+});
+</script>
+<code><pre>
+
+&lt;input type="text" name="demo1" /&gt;
+
+    var option_tree = {
+       "Option 1": {"Suboption":200},
+       "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
+	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+	           }
+    };
+
+    $('input[name=demo1]').optionTree(option_tree);
+</pre></code>
+<h2>Example 2 - change event and configuration</h2>
+<input type="hidden" name="demo2" />
+<script type="text/javascript">
+$(function() {
+
+    var option_tree = {
+       "Option 1": {"Suboption":200},
+       "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
+	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+	           }
+    };
+
+    var options = {empty_value: -1, choose: '...'};
+
+    $('input[name=demo2]').optionTree(option_tree, options)
+                          .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
+
+});
+</script>
+<code><pre>
+
+&lt;input type="hidden" name="demo2" /&gt;
+
+    var option_tree = {
+       "Option 1": {"Suboption":200},
+       "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
+	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+	           }
+    };
+
+    var options = {empty_value: -1, choose: '...'};
+
+    $('input[name=demo2]').optionTree(option_tree, options)
+                          .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
+
+</pre></code>
+
+<h2>Example 3 - preselected options</h2>
+<input type="hidden" name="demo3" />
+<script type="text/javascript">
+$(function() {
+
+    var option_tree = {
+       "Red": {"Default":100},
+       "Blue": {"Variant 1": {"Default":100, "Another":101},
+	       "Variant 2": {"Default":100, "Another":102, "and another":103}
+	      }
+    };
+
+    var options = {preselect: {'demo3': 100}}; // value for default option
+
+    $('input[name=demo3]').optionTree(option_tree, options)
+                          .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
+
+});
+</script>
+<code><pre>
+
+&lt;input type="hidden" name="demo3" /&gt;
+
+    var option_tree = {
+       "Red": {"Default":100},
+       "Blue": {"Variant 1": {"Default":100, "Another":101},
+	       "Variant 2": {"Default":100, "Another":102, "and another":103}
+	      }
+    };
+
+    var options = {preselect: {'demo3': 100}}; // value for default option (include field name)
+
+    $('input[name=demo3]').optionTree(option_tree, options)
+                          .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
+
+</pre></code>
+
+</body>
+</html>

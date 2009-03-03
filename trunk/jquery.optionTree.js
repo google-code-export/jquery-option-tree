@@ -1,6 +1,6 @@
 /*
  * jQuery optionTree Plugin
- * version: 1.0
+ * version: 1.0.1
  * @requires jQuery v1.2 or later
  *
  * Dual licensed under the MIT and GPL licenses:
@@ -75,12 +75,12 @@ $.fn.optionTree = function(tree, options) {
             $.each(tree, function(k, v) {
                 var o = $("<option>").html(k)
                     .attr('value', k);
+                var clean = cleanName(name);
                     if (options.leaf_class && typeof v != 'object') // this option is a leaf node
                         o.addClass(options.leaf_class);
 
                     o.appendTo($select);
-
-                    if (options.preselect && options.preselect[name] && options.preselect[name] == k) {
+                    if (options.preselect && options.preselect[clean] && options.preselect[clean] == v) {
                         o.get(0).selected = true;
                         $select.change();
                     }
