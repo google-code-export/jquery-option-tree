@@ -3,6 +3,11 @@
 <!-- include needed JS files-->
 <script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="../jquery.optionTree.js"></script>
+<style type="text/css">
+select.vertical {
+	display: block;
+}
+</style>
 </head>
 <body>
 <h1>Demo for optionTree plugin</h1>
@@ -107,6 +112,69 @@ $(function() {
 
     $('input[name=demo3]').optionTree(option_tree, options)
                           .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
+
+</pre></code>
+
+<h2>Example 4 - different style &amp; custom change event</h2>
+<div>
+<input type="hidden" name="demo4" />
+</div>
+<script type="text/javascript">
+$(function() {
+
+    var option_tree = {
+       "Red": {"Default":100},
+       "Blue": {"Variant 1": {"Default":100, "Another":101},
+	       "Variant 2": {"Default":100, "Another":102, "and another":103}
+	      }
+    };
+
+    var options = {select_class: 'vertical'}; // CSS class for select elements
+
+    /*
+     Displays string with current labels for each select element separated with ' '
+    */
+    var displayParents = function() {
+	var labels = []; // initialize array
+	$(this).siblings('select') // find all select
+                   .find(':selected') // and their current options
+                     .each(function() { labels.push($(this).text()); }); // and add option text to array
+	alert(labels.join(' '));  // and display the labels
+    }
+
+    $('input[name=demo4]').optionTree(option_tree, options)
+                          .change(displayParents);
+
+});
+</script>
+<code><pre>
+&lt;div&gt;
+&lt;input type="hidden" name="demo4" /&gt;
+&lt;/div&gt;
+
+    var option_tree = {
+       "Red": {"Default":100},
+       "Blue": {"Variant 1": {"Default":100, "Another":101},
+           "Variant 2": {"Default":100, "Another":102, "and another":103}
+          }
+    };
+
+    var options = {select_class: 'vertical'}; // CSS class for select elements
+
+    /*
+     Displays string with current labels for each select element separated with ' '
+    */
+    var displayParents = function() {
+    var labels = []; // initialize array
+    $(this).siblings('select') // find all select
+                   .find(':selected') // and their current options
+                     .each(function() { labels.push($(this).text()); }); // and add option text to array
+    alert(labels.join(' '));  // and display the labels
+    }
+
+    $('input[name=demo4]').optionTree(option_tree, options)
+                          .change(displayParents);
+
 
 </pre></code>
 
