@@ -177,6 +177,65 @@ $(function() {
 
 
 </pre></code>
+<h2>Example 5 - AJAX lazy loading &amp; dynamic choose text</h2>
+<strong>This requires a HTTP server with PHP installed to work!</strong>
+<div>
+<input type="hidden" name="demo5" />
+</div>
+<script type="text/javascript">
+$(function() {
 
+    var options = {
+            empty_value: 'null',
+            indexed: true,  // the data in tree is indexed by values (ids), not by labels
+            on_each_change: 'get-subtree.php', // this file will be called with 'id' parameter, JSON data must be returned 
+            choose: function(level) {
+                return 'Choose level ' + level;
+            }
+        };
+
+        var displayParents = function() {
+            var labels = []; // initialize array
+            $(this).siblings('select') // find all select
+                           .find(':selected') // and their current options
+                             .each(function() { labels.push($(this).text()); }); // and add option text to array
+            alert(this.value + ':' + labels.join(' > '));  // and display the labels
+            }
+
+    $.getJSON('get-subtree.php', function(tree) { // initialize the tree by loading the file first  
+        $('input[name=demo5]').optionTree(tree, options).change(displayParents);
+    });
+});
+</script>
+<code><pre>
+&lt;div&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;demo5&quot; /&gt;
+&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+$(function() {
+
+    var options = {
+            empty_value: &#39;null&#39;,
+            indexed: true,  // the data in tree is indexed by values (ids), not by labels
+            on_each_change: &#39;get-subtree.php&#39;, // this file will be called with &#39;id&#39; parameter, JSON data must be returned 
+            choose: function(level) {
+                return &#39;Choose level &#39; + level;
+            }
+        };
+
+        var displayParents = function() {
+            var labels = []; // initialize array
+            $(this).siblings(&#39;select&#39;) // find all select
+                           .find(&#39;:selected&#39;) // and their current options
+                             .each(function() { labels.push($(this).text()); }); // and add option text to array
+            alert(this.value + &#39;:&#39; + labels.join(&#39; &gt; &#39;));  // and display the labels
+            }
+
+    $.getJSON(&#39;get-subtree.php&#39;, function(tree) { // initialize the tree by loading the file first  
+        $(&#39;input[name=demo5]&#39;).optionTree(tree, options).change(displayParents);
+    });
+});
+&lt;/script&gt;
+</pre></code>
 </body>
 </html>

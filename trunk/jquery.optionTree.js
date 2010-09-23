@@ -1,7 +1,7 @@
 /*
  * jQuery optionTree Plugin
- * version: 1.0.1
- * @requires jQuery v1.2 or later
+ * version: 1.1
+ * @requires jQuery v1.3 or later
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -22,11 +22,13 @@
 $.fn.optionTree = function(tree, options) {
 
     options = $.extend({
-        choose: 'Choose...',
+        choose: 'Choose...', // string with text or function that will be passed current level and returns a string
         preselect: {},
         select_class: '',
         leaf_class: 'final',
-        empty_value: ''
+        empty_value: '', // what value to set the input to if no valid option was selected
+        on_each_change: false, // URL to lazy load (JSON, 'id' parameter will be added) or function. See deafult_lazy_load
+        indexed: false,
     }, options || {});
 
     var cleanName = function (name) {
@@ -39,6 +41,26 @@ $.fn.optionTree = function(tree, options) {
 
     var setValue = function(name, value) {
         $("input[name='" + cleanName(name) + "']").val(value).change();
+    }
+
+    // default lazy loading function
+    var default_lazy_load = function(value) {
+        var input = this;
+        $.getJSON(options.lazy_load, {id: value}, function(tree) {
+            for (var prop in tree) {
+                if (tree.hasOwnProperty(prop)) { // tree not empty
+                    $(input).optionTree(tree, options);
+                    return;
+                }
+            }
+            // tree empty, call value switch
+            $(input).optionTree(value, options);
+        });
+    }
+
+    if (typeof options.on_each_change == 'string') { // URL given as an onchange
+        options.lazy_load = options.on_each_change;
+        options.on_each_change = default_lazy_load;
     }
 
     return this.each(function() {
@@ -56,25 +78,47 @@ $.fn.optionTree = function(tree, options) {
             var $select = $("<select>").attr('name',name)
             .change(function() {
                 if (this.options[this.selectedIndex].value != '') {
-                        $(this).optionTree(tree[this.options[this.selectedIndex].value], options);
+                        if ($.isFunction(options.on_each_change)) {
+                            options.on_each_change.apply(this, [this.options[this.selectedIndex].value, tree]);
+                        } else {
+                            // call with value as a first parameter
+                            $(this).optionTree(tree[this.options[this.selectedIndex].value], options);
+                        }
                 } else {
                        removeNested(name + '_');
                        setValue(name, options.empty_value);
                 }
             });
 
-            if ($(this).is('input'))
+            var text_to_choose;
+
+            if ($(this).is('input')) {
                 $select.insertBefore(this);
-            else
+            } else {
                 $select.insertAfter(this);
+            }
+
+            if (jQuery.isFunction(options.choose)) {
+                var level = $(this).siblings().andSelf().filter('select').length;
+                text_to_choose = options.choose.apply(this, [level]);
+            } else {
+                text_to_choose = options.choose;
+            }
 
             if (options.select_class)
                 $select.addClass(options.select_class);
 
-            $("<option>").html(options.choose).val('').appendTo($select);
+            $("<option>").html(text_to_choose).val('').appendTo($select);
             $.each(tree, function(k, v) {
-                var o = $("<option>").html(k)
-                    .attr('value', k);
+                var label, value;
+                if (options.indexed) {
+                    label = v;
+                    value = k;
+                } else {
+                    label = value = k;
+                }
+                var o = $("<option>").html(label)
+                    .attr('value', value);
                 var clean = cleanName(name);
                     if (options.leaf_class && typeof v != 'object') // this option is a leaf node
                         o.addClass(options.leaf_class);
@@ -87,7 +131,11 @@ $.fn.optionTree = function(tree, options) {
             });
 
         } else { // single option is selected by the user (function called via onchange event())
-            setValue(name, tree);
+            if (options.indexed) {
+                setValue(name, this.options[this.selectedIndex].value);
+            } else {
+                setValue(name, tree);
+            }
         }
     });
 
