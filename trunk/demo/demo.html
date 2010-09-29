@@ -188,10 +188,11 @@ $(function() {
     var options = {
             empty_value: 'null',
             indexed: true,  // the data in tree is indexed by values (ids), not by labels
-            on_each_change: 'get-subtree.php', // this file will be called with 'id' parameter, JSON data must be returned 
+            on_each_change: 'get-subtree.php', // this file will be called with 'id' parameter, JSON data must be returned
             choose: function(level) {
                 return 'Choose level ' + level;
-            }
+            },
+            preselect: {'demo5': ['220','226']}
         };
 
         var displayParents = function() {
@@ -202,7 +203,7 @@ $(function() {
             alert(this.value + ':' + labels.join(' > '));  // and display the labels
             }
 
-    $.getJSON('get-subtree.php', function(tree) { // initialize the tree by loading the file first  
+    $.getJSON('get-subtree.php', function(tree) { // initialize the tree by loading the file first
         $('input[name=demo5]').optionTree(tree, options).change(displayParents);
     });
 });
@@ -217,10 +218,13 @@ $(function() {
     var options = {
             empty_value: &#39;null&#39;,
             indexed: true,  // the data in tree is indexed by values (ids), not by labels
-            on_each_change: &#39;get-subtree.php&#39;, // this file will be called with &#39;id&#39; parameter, JSON data must be returned 
+            on_each_change: &#39;get-subtree.php&#39;, // this file will be called with &#39;id&#39; parameter, JSON data must be returned
             choose: function(level) {
                 return &#39;Choose level &#39; + level;
-            }
+            },
+            preselect: {&#39;demo5&#39;: [&#39;220&#39;,&#39;226&#39;]} // array of default values - if on any level option value will be in this list, it will be selected
+                                                                        // be careful of variable types - &#39;111&#39; !== 111
+
         };
 
         var displayParents = function() {
@@ -231,7 +235,7 @@ $(function() {
             alert(this.value + &#39;:&#39; + labels.join(&#39; &gt; &#39;));  // and display the labels
             }
 
-    $.getJSON(&#39;get-subtree.php&#39;, function(tree) { // initialize the tree by loading the file first  
+    $.getJSON(&#39;get-subtree.php&#39;, function(tree) { // initialize the tree by loading the file first
         $(&#39;input[name=demo5]&#39;).optionTree(tree, options).change(displayParents);
     });
 });
