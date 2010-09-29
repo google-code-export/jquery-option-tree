@@ -63,6 +63,17 @@ $.fn.optionTree = function(tree, options) {
         options.on_each_change = default_lazy_load;
     }
 
+    var isPreselectedFor = function(clean, v) {
+    	if (!options.preselect || !options.preselect[clean])
+    		return false;
+
+    	if ($.isArray(options.preselect[clean])) {
+    		return $.inArray(v, options.preselect[clean]) != -1;
+    	}
+
+    	return (options.preselect[clean] == v);
+    }
+
     return this.each(function() {
 
         var name = $(this).attr('name') + "_";
@@ -109,6 +120,7 @@ $.fn.optionTree = function(tree, options) {
                 $select.addClass(options.select_class);
 
             $("<option>").html(text_to_choose).val('').appendTo($select);
+            var foundPreselect = false;
             $.each(tree, function(k, v) {
                 var label, value;
                 if (options.indexed) {
@@ -120,15 +132,19 @@ $.fn.optionTree = function(tree, options) {
                 var o = $("<option>").html(label)
                     .attr('value', value);
                 var clean = cleanName(name);
-                    if (options.leaf_class && typeof v != 'object') // this option is a leaf node
+                    if (options.leaf_class && typeof value != 'object') // this option is a leaf node
                         o.addClass(options.leaf_class);
 
                     o.appendTo($select);
-                    if (options.preselect && options.preselect[clean] && options.preselect[clean] == v) {
-                        o.get(0).selected = true;
-                        $select.change();
+                    if (isPreselectedFor(clean, value)) {
+                    	o.get(0).selected = true;
+                    	foundPreselect = true;
                     }
             });
+
+            if (foundPreselect) {
+            	$select.change();
+            }
 
         } else { // single option is selected by the user (function called via onchange event())
             if (options.indexed) {
