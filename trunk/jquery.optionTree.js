@@ -1,6 +1,6 @@
 /*
  * jQuery optionTree Plugin
- * version: 1.1
+ * version: 1.2
  * @requires jQuery v1.3 or later
  *
  * Dual licensed under the MIT and GPL licenses:
@@ -28,6 +28,8 @@ $.fn.optionTree = function(tree, options) {
         leaf_class: 'final',
         empty_value: '', // what value to set the input to if no valid option was selected
         on_each_change: false, // URL to lazy load (JSON, 'id' parameter will be added) or function. See deafult_lazy_load
+        set_value_on: 'leaf', // leaf - sets input value only when choosing leaf node. 'each' - sets value on each level change.
+                              // makes sense only then indexed=true
         indexed: false,
     }, options || {});
 
@@ -64,18 +66,17 @@ $.fn.optionTree = function(tree, options) {
     }
 
     var isPreselectedFor = function(clean, v) {
-    	if (!options.preselect || !options.preselect[clean])
-    		return false;
+      if (!options.preselect || !options.preselect[clean])
+        return false;
 
-    	if ($.isArray(options.preselect[clean])) {
-    		return $.inArray(v, options.preselect[clean]) != -1;
-    	}
+      if ($.isArray(options.preselect[clean])) {
+        return $.inArray(v, options.preselect[clean]) != -1;
+      }
 
-    	return (options.preselect[clean] == v);
+      return (options.preselect[clean] == v);
     }
 
     return this.each(function() {
-
         var name = $(this).attr('name') + "_";
 
         // remove all dynamic options of lower levels
@@ -89,15 +90,19 @@ $.fn.optionTree = function(tree, options) {
             var $select = $("<select>").attr('name',name)
             .change(function() {
                 if (this.options[this.selectedIndex].value != '') {
-                        if ($.isFunction(options.on_each_change)) {
-                            options.on_each_change.apply(this, [this.options[this.selectedIndex].value, tree]);
-                        } else {
-                            // call with value as a first parameter
-                            $(this).optionTree(tree[this.options[this.selectedIndex].value], options);
-                        }
+                    if ($.isFunction(options.on_each_change)) {
+                      removeNested(name + '_');
+                        options.on_each_change.apply(this, [this.options[this.selectedIndex].value, tree]);
+                    } else {
+                      // call with value as a first parameter
+                        $(this).optionTree(tree[this.options[this.selectedIndex].value], options);
+                    }
+                    if (options.set_value_on == 'each') {
+                      setValue(name, this.options[this.selectedIndex].value);
+                    }
                 } else {
-                       removeNested(name + '_');
-                       setValue(name, options.empty_value);
+                  removeNested(name + '_');
+                    setValue(name, options.empty_value);
                 }
             });
 
@@ -137,16 +142,16 @@ $.fn.optionTree = function(tree, options) {
 
                     o.appendTo($select);
                     if (isPreselectedFor(clean, value)) {
-                    	o.get(0).selected = true;
-                    	foundPreselect = true;
+                      o.get(0).selected = true;
+                      foundPreselect = true;
                     }
             });
 
             if (foundPreselect) {
-            	$select.change();
+              $select.change();
             }
 
-        } else { // single option is selected by the user (function called via onchange event())
+        } else if (options.set_value_on == 'leaf') { // single option is selected by the user (function called via onchange event())
             if (options.indexed) {
                 setValue(name, this.options[this.selectedIndex].value);
             } else {
