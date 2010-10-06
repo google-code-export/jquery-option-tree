@@ -9,6 +9,8 @@
  *
  * @version $Id$
  * @author  Krzysztof Kotowicz <kkotowicz at gmail dot com>
+ * @see http://code.google.com/p/jquery-option-tree/
+ * @see http://blog.kotowicz.net/search/label/option
  */
 
 /**
