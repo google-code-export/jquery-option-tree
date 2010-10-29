@@ -265,7 +265,8 @@ $(function() {
             choose: function(level) {
                 return 'Choose level ' + level;
             },
-            preselect: {'demo6': ['220','226']}
+            preselect: {'demo6': ['220','226']},
+            preselect_only_once: true // prevent auto selecting whole branch when user maniputales one of branch levels
         };
 
         var displayParents = function() {
@@ -297,9 +298,9 @@ $(function() {
             choose: function(level) {
                 return &#39;Choose level &#39; + level;
             },
-            preselect: {&#39;demo6&#39;: [&#39;220&#39;,&#39;226&#39;]} // array of default values - if on any level option value will be in this list, it will be selected
+            preselect: {&#39;demo6&#39;: [&#39;220&#39;,&#39;226&#39;]}, // array of default values - if on any level option value will be in this list, it will be selected
                                                                         // be careful of variable types - &#39;111&#39; !== 111
-
+            preselect_only_once: true // prevent auto selecting whole branch when user maniputales one of branch levels
         };
 
         var displayParents = function() {

@@ -33,6 +33,8 @@ $.fn.optionTree = function(tree, options) {
         set_value_on: 'leaf', // leaf - sets input value only when choosing leaf node. 'each' - sets value on each level change.
                               // makes sense only then indexed=true
         indexed: false,
+        preselect_only_once: false, // if true, once preselected items will be chosen, the preselect list is cleared. This is to allow
+                                    // changing the higher level options without automatically changing lower levels when a whole subtree is in preselect list
     }, options || {});
 
     var cleanName = function (name) {
@@ -151,6 +153,10 @@ $.fn.optionTree = function(tree, options) {
 
             if (foundPreselect) {
               $select.change();
+            }
+
+            if (!foundPreselect && options.preselect_only_once) { // clear preselect on first not-found level
+            	options.preselect[cleanName(name)] = null;
             }
 
         } else if (options.set_value_on == 'leaf') { // single option is selected by the user (function called via onchange event())
