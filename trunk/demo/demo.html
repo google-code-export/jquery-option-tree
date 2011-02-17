@@ -5,11 +5,11 @@
 <script type="text/javascript" src="../jquery.optionTree.js"></script>
 <style type="text/css">
 select.vertical {
-	display: block;
+    display: block;
 }
 .results {
-	margin: 10px;
-	color: darkgreen;
+    margin: 10px;
+    color: darkgreen;
 }
 </style>
 </head>
@@ -25,8 +25,8 @@ $(function() {
     var option_tree = {
        "Option 1": {"Suboption":200},
        "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
-	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
-	           }
+                "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+               }
     };
 
     $('input[name=demo1]').optionTree(option_tree);
@@ -40,8 +40,8 @@ $(function() {
     var option_tree = {
        "Option 1": {"Suboption":200},
        "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
-	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
-	           }
+                "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+               }
     };
 
     $('input[name=demo1]').optionTree(option_tree);
@@ -54,8 +54,8 @@ $(function() {
     var option_tree = {
        "Option 1": {"Suboption":200},
        "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
-	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
-	           }
+                "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+               }
     };
 
     var options = {empty_value: -1, choose: '...'};
@@ -72,8 +72,8 @@ $(function() {
     var option_tree = {
        "Option 1": {"Suboption":200},
        "Option 2": {"Suboption 2": {"Subsub 1":201, "Subsub 2":202},
-	            "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
-	           }
+                "Suboption 3": {"Subsub 3":203, "Subsub 4":204, "Subsub 5":205}
+               }
     };
 
     var options = {empty_value: -1, choose: '...'};
@@ -91,11 +91,11 @@ $(function() {
     var option_tree = {
        "Red": {"Default":100},
        "Blue": {"Variant 1": {"Default":100, "Another":101},
-	       "Variant 2": {"Default":100, "Another":102, "and another":103}
-	      }
+           "Variant 2": {"Default":100, "Another":102, "and another":103}
+          }
     };
 
-    var options = {preselect: {'demo3': 100}}; // value for default option
+    var options = {preselect: {'demo3': "Default"}}; // value for default option
 
     $('input[name=demo3]').optionTree(option_tree, options)
                           .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
@@ -109,11 +109,11 @@ $(function() {
     var option_tree = {
        "Red": {"Default":100},
        "Blue": {"Variant 1": {"Default":100, "Another":101},
-	       "Variant 2": {"Default":100, "Another":102, "and another":103}
-	      }
+           "Variant 2": {"Default":100, "Another":102, "and another":103}
+          }
     };
 
-    var options = {preselect: {'demo3': 100}}; // value for default option (include field name)
+    var options = {preselect: {'demo3': "Default"}}; // value for default option (include field name)
 
     $('input[name=demo3]').optionTree(option_tree, options)
                           .change(function() { alert('Field ' + this.name  + ' = ' + this.value )});
@@ -130,8 +130,8 @@ $(function() {
     var option_tree = {
        "Red": {"Default":100},
        "Blue": {"Variant 1": {"Default":100, "Another":101},
-	       "Variant 2": {"Default":100, "Another":102, "and another":103}
-	      }
+           "Variant 2": {"Default":100, "Another":102, "and another":103}
+          }
     };
 
     var options = {select_class: 'vertical'}; // CSS class for select elements
@@ -140,11 +140,11 @@ $(function() {
      Displays string with current labels for each select element separated with ' '
     */
     var displayParents = function() {
-	var labels = []; // initialize array
-	$(this).siblings('select') // find all select
+    var labels = []; // initialize array
+    $(this).siblings('select') // find all select
                    .find(':selected') // and their current options
                      .each(function() { labels.push($(this).text()); }); // and add option text to array
-	alert(labels.join(' '));  // and display the labels
+    alert(labels.join(' '));  // and display the labels
     }
 
     $('input[name=demo4]').optionTree(option_tree, options)

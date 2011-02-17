@@ -33,7 +33,7 @@ $.fn.optionTree = function(tree, options) {
         set_value_on: 'leaf', // leaf - sets input value only when choosing leaf node. 'each' - sets value on each level change.
                               // makes sense only then indexed=true
         indexed: false,
-        preselect_only_once: false, // if true, once preselected items will be chosen, the preselect list is cleared. This is to allow
+        preselect_only_once: false // if true, once preselected items will be chosen, the preselect list is cleared. This is to allow
                                     // changing the higher level options without automatically changing lower levels when a whole subtree is in preselect list
     }, options || {});
 
@@ -47,13 +47,14 @@ $.fn.optionTree = function(tree, options) {
 
     var setValue = function(name, value) {
         $("input[name='" + cleanName(name) + "']").val(value).change();
-    }
+    };
 
     // default lazy loading function
     var default_lazy_load = function(value) {
         var input = this;
         $.getJSON(options.lazy_load, {id: value}, function(tree) {
-            for (var prop in tree) {
+            var prop;
+            for (prop in tree) {
                 if (tree.hasOwnProperty(prop)) { // tree not empty
                     $(input).optionTree(tree, options);
                     return;
@@ -62,23 +63,24 @@ $.fn.optionTree = function(tree, options) {
             // tree empty, call value switch
             $(input).optionTree(value, options);
         });
-    }
+    };
 
-    if (typeof options.on_each_change == 'string') { // URL given as an onchange
+    if (typeof options.on_each_change === 'string') { // URL given as an onchange
         options.lazy_load = options.on_each_change;
         options.on_each_change = default_lazy_load;
     }
 
     var isPreselectedFor = function(clean, v) {
-      if (!options.preselect || !options.preselect[clean])
+      if (!options.preselect || !options.preselect[clean]) {
         return false;
-
-      if ($.isArray(options.preselect[clean])) {
-        return $.inArray(v, options.preselect[clean]) != -1;
       }
 
-      return (options.preselect[clean] == v);
-    }
+      if ($.isArray(options.preselect[clean])) {
+        return $.inArray(v, options.preselect[clean]) !== -1;
+      }
+
+      return (options.preselect[clean] === v);
+    };
 
     return this.each(function() {
         var name = $(this).attr('name') + "_";
@@ -86,14 +88,14 @@ $.fn.optionTree = function(tree, options) {
         // remove all dynamic options of lower levels
         removeNested(name);
 
-        if (typeof tree == "object") { // many options exists for current nesting level
+        if (typeof tree === "object") { // many options exists for current nesting level
 
             // create select element with all the options
             // and bind onchange event to recursively call this function
 
             var $select = $("<select>").attr('name',name)
             .change(function() {
-                if (this.options[this.selectedIndex].value != '') {
+                if (this.options[this.selectedIndex].value !== '') {
                     if ($.isFunction(options.on_each_change)) {
                       removeNested(name + '_');
                         options.on_each_change.apply(this, [this.options[this.selectedIndex].value, tree]);
@@ -101,7 +103,7 @@ $.fn.optionTree = function(tree, options) {
                       // call with value as a first parameter
                         $(this).optionTree(tree[this.options[this.selectedIndex].value], options);
                     }
-                    if (options.set_value_on == 'each') {
+                    if (options.set_value_on === 'each') {
                       setValue(name, this.options[this.selectedIndex].value);
                     }
                 } else {
@@ -125,8 +127,9 @@ $.fn.optionTree = function(tree, options) {
                 text_to_choose = options.choose;
             }
 
-            if (options.select_class)
+            if (options.select_class) {
                 $select.addClass(options.select_class);
+            }
 
             $("<option>").html(text_to_choose).val('').appendTo($select);
             var foundPreselect = false;
@@ -141,8 +144,9 @@ $.fn.optionTree = function(tree, options) {
                 var o = $("<option>").html(label)
                     .attr('value', value);
                 var clean = cleanName(name);
-                    if (options.leaf_class && typeof value != 'object') // this option is a leaf node
+                    if (options.leaf_class && typeof value !== 'object') { // this option is a leaf node
                         o.addClass(options.leaf_class);
+                    }
 
                     o.appendTo($select);
                     if (isPreselectedFor(clean, value)) {
@@ -156,10 +160,10 @@ $.fn.optionTree = function(tree, options) {
             }
 
             if (!foundPreselect && options.preselect_only_once) { // clear preselect on first not-found level
-            	options.preselect[cleanName(name)] = null;
+                options.preselect[cleanName(name)] = null;
             }
 
-        } else if (options.set_value_on == 'leaf') { // single option is selected by the user (function called via onchange event())
+        } else if (options.set_value_on === 'leaf') { // single option is selected by the user (function called via onchange event())
             if (options.indexed) {
                 setValue(name, this.options[this.selectedIndex].value);
             } else {
@@ -168,5 +172,5 @@ $.fn.optionTree = function(tree, options) {
         }
     });
 
-}
-})(jQuery);
+};
+}(jQuery));
