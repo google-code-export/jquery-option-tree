@@ -1,6 +1,6 @@
 /*
  * jQuery optionTree Plugin
- * version: 1.21
+ * version: 1.3
  * @requires jQuery v1.3 or later
  *
  * Dual licensed under the MIT and GPL licenses:
