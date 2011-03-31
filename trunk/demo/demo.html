@@ -317,5 +317,73 @@ $(function() {
 });
 &lt;/script&gt;
 </pre></code>
+<h2>Example 7 - select size &gt; 1 &amp; load animation</h2>
+<strong>This requires a HTTP server with PHP installed to work!</strong>
+<div>
+<input type="text" name="demo7" />
+</div>
+<div class="results" id="demo7-result"></div>
+<script type="text/javascript">
+$(function() {
+
+    var options = {
+            empty_value: 'null',
+            indexed: true,  // the data in tree is indexed by values (ids), not by labels
+            on_each_change: 'get-subtree.php', // this file will be called with 'id' parameter, JSON data must be returned
+            choose: function(level) {
+                return 'Choose level ' + level;
+            },
+            loading_image: 'ajax-load.gif',
+            show_multiple: 10, // if true - will set the size to show all options
+            choose: '' // no choose item
+        };
+
+        var displayParents = function() {
+            var labels = []; // initialize array
+            $(this).siblings('select') // find all select
+                           .find(':selected') // and their current options
+                             .each(function() { labels.push($(this).text()); }); // and add option text to array
+            $('<div>').text(this.value + ':' + labels.join(' > ')).appendTo('#demo7-result');  // and display the labels
+            }
+
+    $.getJSON('get-subtree.php', function(tree) { // initialize the tree by loading the file first
+        $('input[name=demo7]').optionTree(tree, options).change(displayParents);
+    });
+});
+</script>
+<code><pre>
+&lt;div&gt;
+&lt;input type=&quot;text&quot; name=&quot;demo7&quot; /&gt;
+&lt;/div&gt;
+&lt;div class=&quot;results&quot; id=&quot;demo7-result&quot;&gt;&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+$(function() {
+
+    var options = {
+            empty_value: 'null',
+            indexed: true,  // the data in tree is indexed by values (ids), not by labels
+            on_each_change: 'get-subtree.php', // this file will be called with 'id' parameter, JSON data must be returned
+            choose: function(level) {
+                return 'Choose level ' + level;
+            },
+            loading_image: 'ajax-load.gif',
+            show_multiple: 10, // if true - will set the size to show all options
+            choose: '' // no choose item
+        };
+
+        var displayParents = function() {
+            var labels = []; // initialize array
+            $(this).siblings('select') // find all select
+                           .find(':selected') // and their current options
+                             .each(function() { labels.push($(this).text()); }); // and add option text to array
+            $('&lt;div&gt;').text(this.value + ':' + labels.join(' &gt; ')).appendTo('#demo7-result');  // and display the labels
+            }
+
+    $.getJSON('get-subtree.php', function(tree) { // initialize the tree by loading the file first
+        $('input[name=demo7]').optionTree(tree, options).change(displayParents);
+    });
+});
+&lt;/script&gt;
+</pre></code>
 </body>
 </html>
