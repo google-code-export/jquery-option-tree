@@ -25,11 +25,13 @@ $.fn.optionTree = function(tree, options) {
 
     options = $.extend({
         choose: 'Choose...', // string with text or function that will be passed current level and returns a string
+        show_multiple: false, // show multiple values (if true takes number of items as size, or number (eg. 12) to show fixed size)
         preselect: {},
+        loading_image: '', // show an ajax loading graphics (animated gif) while loading ajax (eg. /ajax-loader.gif)
         select_class: '',
         leaf_class: 'final',
         empty_value: '', // what value to set the input to if no valid option was selected
-        on_each_change: false, // URL to lazy load (JSON, 'id' parameter will be added) or function. See deafult_lazy_load
+        on_each_change: false, // URL to lazy load (JSON, 'id' parameter will be added) or function. See default_lazy_load
         set_value_on: 'leaf', // leaf - sets input value only when choosing leaf node. 'each' - sets value on each level change.
                               // makes sense only then indexed=true
         indexed: false,
@@ -52,7 +54,16 @@ $.fn.optionTree = function(tree, options) {
     // default lazy loading function
     var default_lazy_load = function(value) {
         var input = this;
+        if ( options.loading_image !== '' ) {
+          // show loading animation
+          $("<img>")
+            .attr('src', options.loading_image)
+            .attr('class', 'optionTree-loader')
+            .insertAfter(input);
+        }
+
         $.getJSON(options.lazy_load, {id: value}, function(tree) {
+            $('.optionTree-loader').remove();
             var prop;
             for (prop in tree) {
                 if (tree.hasOwnProperty(prop)) { // tree not empty
@@ -112,7 +123,31 @@ $.fn.optionTree = function(tree, options) {
                 }
             });
 
-            var text_to_choose;
+            var text_to_choose = '';
+
+            if (jQuery.isFunction(options.choose)) {
+                var level = $(this).siblings().andSelf().filter('select').length;
+                text_to_choose = options.choose.apply(this, [level]);
+            } else if ( options.choose !== '' ) {
+                text_to_choose = options.choose;
+            }
+
+            // if show multiple -> show open select
+            var count_tree_objects = 0;
+            if ( text_to_choose !== '' ) {
+              // we have a default value
+              count_tree_objects++;
+            }
+            if (options.show_multiple > 1) {
+                count_tree_objects = options.show_multiple;
+            } else if (options.show_multiple === true) {
+              $.each(tree, function() {
+                 count_tree_objects++;
+              });
+            }
+            if ( count_tree_objects > 1 ){
+              $select.attr('size', count_tree_objects);
+            }
 
             if ($(this).is('input')) {
                 $select.insertBefore(this);
@@ -120,18 +155,14 @@ $.fn.optionTree = function(tree, options) {
                 $select.insertAfter(this);
             }
 
-            if (jQuery.isFunction(options.choose)) {
-                var level = $(this).siblings().andSelf().filter('select').length;
-                text_to_choose = options.choose.apply(this, [level]);
-            } else {
-                text_to_choose = options.choose;
-            }
-
             if (options.select_class) {
                 $select.addClass(options.select_class);
             }
 
-            $("<option>").html(text_to_choose).val('').appendTo($select);
+            if ( text_to_choose !== '' ) {
+              $("<option>").html(text_to_choose).val('').appendTo($select);
+            }
+
             var foundPreselect = false;
             $.each(tree, function(k, v) {
                 var label, value;
