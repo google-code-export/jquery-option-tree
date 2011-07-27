@@ -251,7 +251,7 @@ $(function() {
 <h2>Example 6 - AJAX lazy loading &amp; setting value on each level change</h2>
 <strong>This requires a HTTP server with PHP installed to work!</strong>
 <div>
-<input type="text" name="demo6" />
+<input type="text" name="demo6" id="demo6" />
 </div>
 <div class="results" id="demo6-result"></div>
 <script type="text/javascript">
@@ -266,7 +266,9 @@ $(function() {
                 return 'Choose level ' + level;
             },
             preselect: {'demo6': ['220','226']},
-            preselect_only_once: true // prevent auto selecting whole branch when user maniputales one of branch levels
+            preselect_only_once: true, // prevent auto selecting whole branch when user maniputales one of branch levels
+            get_parent_value_if_empty: true,
+            attr: "id" // we'll use input id instead of name
         };
 
         var displayParents = function() {
@@ -300,7 +302,9 @@ $(function() {
             },
             preselect: {&#39;demo6&#39;: [&#39;220&#39;,&#39;226&#39;]}, // array of default values - if on any level option value will be in this list, it will be selected
                                                                         // be careful of variable types - &#39;111&#39; !== 111
-            preselect_only_once: true // prevent auto selecting whole branch when user maniputales one of branch levels
+            preselect_only_once: true, // prevent auto selecting whole branch when user maniputales one of branch levels
+            get_parent_value_if_empty: true,
+            attr: "id" // we'll use input id instead of name
         };
 
         var displayParents = function() {
