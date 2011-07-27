@@ -35,8 +35,10 @@ $.fn.optionTree = function(tree, options) {
         set_value_on: 'leaf', // leaf - sets input value only when choosing leaf node. 'each' - sets value on each level change.
                               // makes sense only then indexed=true
         indexed: false,
-        preselect_only_once: false // if true, once preselected items will be chosen, the preselect list is cleared. This is to allow
+        preselect_only_once: false, // if true, once preselected items will be chosen, the preselect list is cleared. This is to allow
                                     // changing the higher level options without automatically changing lower levels when a whole subtree is in preselect list
+        get_parent_value_if_empty: false, //if true, if the last selected option is 'choose level x',then it will try to find parent's select value
+        attr: 'name' // default attribute name to use for tracking the nested values. You can use e.g. 'id' if you don'tw ant to populate your form submissions  with additional inputs
     }, options || {});
 
     var cleanName = function (name) {
@@ -44,11 +46,29 @@ $.fn.optionTree = function(tree, options) {
     };
 
     var removeNested = function (name) {
-        $("select[name^='"+ name + "']").remove();
+        $("select[" + options.attr + "^='"+ name + "']").remove();
+    };
+    
+    var parentName = function (name) {
+        return name.replace(/_$/, ''); 
     };
 
     var setValue = function(name, value) {
-        $("input[name='" + cleanName(name) + "']").val(value).change();
+        $("input[" + options.attr + "='" + cleanName(name) + "']").val(value).change();
+    };
+    
+    var getParentValue = function(name) {
+        var value = '',
+            $parent;
+
+        if (name !== cleanName(name)) {
+            $parent = $("select[" + options.attr + "='" + parentName(name) + "']");
+            if ($parent.length > 0) {
+                return $parent.val();
+            }
+        }
+
+        return options.empty_value;
     };
 
     // default lazy loading function
@@ -94,7 +114,7 @@ $.fn.optionTree = function(tree, options) {
     };
 
     return this.each(function() {
-        var name = $(this).attr('name') + "_";
+        var name = $(this).attr(options.attr) + "_";
 
         // remove all dynamic options of lower levels
         removeNested(name);
@@ -104,7 +124,7 @@ $.fn.optionTree = function(tree, options) {
             // create select element with all the options
             // and bind onchange event to recursively call this function
 
-            var $select = $("<select>").attr('name',name)
+            var $select = $("<select>").attr(options.attr,name)
             .change(function() {
                 if (this.options[this.selectedIndex].value !== '') {
                     if ($.isFunction(options.on_each_change)) {
@@ -117,9 +137,15 @@ $.fn.optionTree = function(tree, options) {
                     if (options.set_value_on === 'each') {
                       setValue(name, this.options[this.selectedIndex].value);
                     }
-                } else {
-                  removeNested(name + '_');
-                    setValue(name, options.empty_value);
+                } else { // empty value was selected
+                    removeNested(name + '_');
+                    
+                    var fallback = options.empty_value;
+                    
+                    if (options.get_parent_value_if_empty) {
+                        fallback = getParentValue(name);
+                    }
+                    setValue(name, fallback);
                 }
             });
 
