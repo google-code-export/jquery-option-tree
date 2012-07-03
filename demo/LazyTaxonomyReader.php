@@ -55,6 +55,17 @@ class LazyTaxonomyReader {
         // strip up to and including last separator
         return substr($line, strrpos($line, $this->separator) + strlen($this->separator));
     }
+    
+    protected function str_replace_once($search, $replace, $subject) {
+        $firstChar = strpos($subject, $search);
+        if($firstChar !== false) {
+            $beforeStr = substr($subject,0,$firstChar);
+            $afterStr = substr($subject, $firstChar + strlen($search));
+            return $beforeStr.$replace.$afterStr;
+        } else {
+            return $subject;
+        }
+    }
 
     protected function isDirectlyBelowBase($line) {
 
@@ -73,7 +84,7 @@ class LazyTaxonomyReader {
             }
 
             // remove start text AND the following separator
-            $line = str_replace($start, '', $line);
+            $line = $this->str_replace_once($start, '', $line);
         }
 
         // we're direct descendants if we have no separators left on the line
